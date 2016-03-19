@@ -3,14 +3,19 @@
 #include <time.h>
 #include <math.h>
 
+struct test{
+	int topFloor;
+	int bottomFloor;
+	int numRounds;
+};
 int binarySearchForFloor(int balloonPop, int topFloor, int bottomFloor);
 int linearSearchForFloor(int balloonPop, int topFloor, int bottomFloor);
 double getExpFromUniform(double probability, double lambda);
 double getNormalRV(double mu, double sigma);
 double getUniformRV();
-int* uniformTest(int topFloor, int bottomFloor, int numRounds, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
-int* expTest(int topFloor, int bottomFloor, int numRounds, double lambda, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
-int* normTest(int topFloor, int bottomFloor, int numRounds, double mu, double sigma, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
+int* uniformTest(struct test thisTest, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
+int* expTest(struct test thisTest, double lambda, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
+int* normTest(struct test thisTest, double mu, double sigma, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
 int getDistrubution(int argc, char **argv);
 int getSearchFunction(int argc, char **argv);
 void printUsage();
@@ -20,9 +25,10 @@ int main(int argc, char *argv[])
 	int distro = getDistrubution(argc, argv);
 	int searchFunction = getSearchFunction(argc, argv);
 	int startingArg = 3;
-	int userTopFloor = atol(argv[3]);
-	int userBottomFloor = atol(argv[4]);
-	int userNumRounds = atol(argv[5]);
+	struct test thisTest;
+	thisTest.topFloor = atol(argv[3]);
+	thisTest.bottomFloor = atol(argv[4]);
+	thisTest.numRounds = atol(argv[5]);
 	//printf("%d - %d - %d - %d \n",distro,userTopFloor,userBottomFloor,userNumRounds);
 	int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor);
 
@@ -43,18 +49,18 @@ int main(int argc, char *argv[])
 		break;
 	case 1:
 		printf("Uniform test\n");
-		uniformTest(userTopFloor,userBottomFloor,userNumRounds,searchToUse);
+		uniformTest(thisTest,searchToUse);
 		break;
 	case 2:
 		printf("Exponential test\n");
 		double userLambda = atof(argv[startingArg+3]);
-		expTest(userTopFloor,userBottomFloor,userNumRounds,userLambda,searchToUse);
+		expTest(thisTest,userLambda,searchToUse);
 		break;
 	case 3:
 		printf("Normal test\n");
 		double userMu = atof(argv[startingArg+3]);
 		double userSigma = atof(argv[startingArg+4]);
-		normTest(userTopFloor,userBottomFloor,userNumRounds,userMu,userSigma,searchToUse);
+		normTest(thisTest,userMu,userSigma,searchToUse);
 	}
 	return 0;
 }
@@ -186,8 +192,11 @@ double getUniformRV()
 }
 
 
-int* uniformTest(int topFloor, int bottomFloor, int numRounds, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
+int* uniformTest(struct test thisTest, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
 {
+	int numRounds = thisTest.numRounds;
+	int topFloor = thisTest.topFloor;
+	int bottomFloor = thisTest.bottomFloor;
 	int array[2];//First Item is count
 	int *arrayPointer;
 	int passed;
@@ -213,8 +222,11 @@ int* uniformTest(int topFloor, int bottomFloor, int numRounds, int (*searchToUse
 	return arrayPointer;
 }
 
-int* expTest(int topFloor, int bottomFloor, int numRounds, double lambda, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
+int* expTest(struct test thisTest, double lambda, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
 {
+	int numRounds = thisTest.numRounds;
+	int topFloor = thisTest.topFloor;
+	int bottomFloor = thisTest.bottomFloor;
 	int array[2];//First Item is count
 	int *arrayPointer;
 	arrayPointer=&array[0];
@@ -242,8 +254,11 @@ int* expTest(int topFloor, int bottomFloor, int numRounds, double lambda, int (*
 
 }
 
-int* normTest(int topFloor, int bottomFloor, int numRounds, double mu, double sigma, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
+int* normTest(struct test thisTest, double mu, double sigma, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
 {
+	int numRounds = thisTest.numRounds;
+	int topFloor = thisTest.topFloor;
+	int bottomFloor = thisTest.bottomFloor;
 	int array[2];//First Item is count
 	int *arrayPointer;
 	arrayPointer=&array[0];
