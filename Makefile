@@ -13,3 +13,11 @@ example: all
 	./distributions.o -n -l 100 1 100 50 5
 clean:
 	rm distributions.o
+
+tex:
+	pdflatex building.tex
+
+cleantex:
+	rm building.aux
+	rm building.pdf
+	rm building.log
