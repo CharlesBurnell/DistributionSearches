@@ -7,12 +7,14 @@ struct test{
 	int topFloor;
 	int bottomFloor;
 	int numRounds;
+	int typeOfRV;
 };
 int binarySearchForFloor(int balloonPop, int topFloor, int bottomFloor);
 int linearSearchForFloor(int balloonPop, int topFloor, int bottomFloor);
 double getExpFromUniform(double probability, double lambda);
 double getNormalRV(double mu, double sigma);
 double getUniformRV();
+void testFunction(struct test thisTest);
 int* uniformTest(struct test thisTest, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
 int* expTest(struct test thisTest, double lambda, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
 int* normTest(struct test thisTest, double mu, double sigma, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
@@ -190,7 +192,26 @@ double getUniformRV()
 	uniformRV = (double)rand()/(double)RAND_MAX;
 	return uniformRV;
 }
-
+/*
+ * TODO finish this function
+void testFunction(struct test thisTest)
+{
+	int numRounds = thisTest.numRounds;
+	int topFloor = thisTest.topFloor;
+	int bottomFloor = thisTest.bottomFloor;
+	int passed;
+	int totalRounds;
+	int balloonPop;
+	passed=0;
+	totalRounds=0;
+	int i;
+	int numFloors = topFloor-bottomFloor;
+	int typeOfRV = thisTest.typeOfRV;
+	for(i=0;i<numRounds;i++)
+	{
+	}
+}
+*/
 
 int* uniformTest(struct test thisTest, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
 {
