@@ -1,18 +1,29 @@
+CC = gcc
+CFLAGS = -Wall -g
+OBJS = distributions.o searchFunctions.o generateRVs.o
+
+.c.o:
+	    $(CC) -c $(CFLAGS) $<
+
+all: distributionTest
 
 
-all:
-	gcc -Wall distributions.c -o distributions.o -lm
+distributionTest: $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+	#$(CC) $(CFLAGS) -o $(OBJS) -lm
+	#gcc -Wall distributions.c -o distributions.o -lm
 
 example: all
-	./distributions.o
-	./distributions.o -u -b 100 1 100
-	./distributions.o -u -l 100 1 100
-	./distributions.o -e -b 100 1 100 .76
-	./distributions.o -e -l 100 1 100 .75
-	./distributions.o -n -b 100 1 100 50 5
-	./distributions.o -n -l 100 1 100 50 5
+	./distributionTest
+	./distributionTest -u -b 100 1 100
+	./distributionTest -u -l 100 1 100
+	./distributionTest -e -b 100 1 100 .76
+	./distributionTest -e -l 100 1 100 .75
+	./distributionTest -n -b 100 1 100 50 5
+	./distributionTest -n -l 100 1 100 50 5
 clean:
-	rm distributions.o
+	rm *.o
+	rm distributionTest
 
 tex:
 	pdflatex building.tex
