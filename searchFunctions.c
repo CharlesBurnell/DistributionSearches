@@ -85,9 +85,23 @@ int binarySearchForFloor(int balloonPop, int topFloor, int bottomFloor)
 	if(floorGuess!=balloonPop){
 		printf(" %d and %d and %d\n",floorGuess,balloonPop,lowerBound);
 		exit(1);
-		return -1;
+//		return -1;
 	}
 	//printf("%d\n",counter);
 	return counter;
 }
 
+/*
+ * This is a search that is like a binary search but randomly selects point
+ */
+
+int randomSearchForFloor(int balloonPop, int topFloor, int bottomFloor)
+{
+	int count = 1;
+	int floorGuess = rand()%(topFloor-bottomFloor)+bottomFloor;
+	while (floorGuess!=balloonPop){
+		floorGuess = rand()%(topFloor-bottomFloor)+bottomFloor;
+		count++;
+	}
+	return count;
+}

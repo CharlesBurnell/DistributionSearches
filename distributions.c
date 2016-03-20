@@ -49,6 +49,9 @@ int main(int argc, char *argv[])
 	case 2:
 		searchToUse = linearSearchForFloor;
 		break;
+	case 3:
+		searchToUse = randomSearchForFloor;
+		break;
 	}
 
 	testFunction(thisTest,searchToUse);
@@ -166,6 +169,9 @@ int getSearchFunction(int argc, char **argv)
 	case 'l':
 		return 2;
 		break;
+	case 'r':
+		return 3;
+		break;
 	default:
 		printUsage();
 		return 0;
@@ -178,6 +184,7 @@ void printUsage()
 	printf("Arguments are -d -s topFloor bottomFloor numberOfRounds <mu|lambda> <sigma>\n");
 	printf("where -d is -u for Unform -e for Exponential -n for Normal\n");
 	printf("and where -s is -b for binary search -l for linear search\n");
+	printf("   and -r is for a random search \n");
 	printf("no optional arguments passed for uniform\n");
 	printf("for Exponential only lambda\n");
 	printf("for Normal both mu and sigma\n");
