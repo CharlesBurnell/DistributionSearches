@@ -95,14 +95,17 @@ int getBalloonPop(struct test thisTest){
 	double secondParameter;
 	switch(thisTest.typeOfRV.distro)
 	{
+	//Uniform RV
 	case 1:
 		balloonPop = rand() % (topFloor-bottomFloor) + bottomFloor;
 		break;
+	//Exponential RV
 	case 2:
 		firstParameter= thisTest.firstParameter.lambda;
 		probability = getUniformRV();
 		balloonPop = (int) getExpFromUniform(probability,firstParameter)+bottomFloor;
 		break;
+	//Normal RV
 	case 3:
 		firstParameter = thisTest.firstParameter.mu;
 		secondParameter= thisTest.secondParameter.sigma;
@@ -125,12 +128,15 @@ int getDistrubution(int argc, char **argv)
 	firstChar = *++argv[1];
 	switch(firstChar)
 	{
+	//Return Uniform RV
 	case 'u':
 		return 1;
 		break;
+	//Return Exponential RV
 	case 'e':
 		return 2;
 		break;
+	//Return Normal RV
 	case 'n':
 		return 3;
 		break;
@@ -152,9 +158,11 @@ int getSearchFunction(int argc, char **argv)
 	searchChar = *++argv[2];
 	switch(searchChar)
 	{
+	// Binary Search
 	case 'b':
 		return 1;
 		break;
+	// Linear Search
 	case 'l':
 		return 2;
 		break;

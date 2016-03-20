@@ -15,12 +15,12 @@ distributionTest: $(OBJS)
 
 example: all
 	./distributionTest
-	./distributionTest -u -b 100 1 100
-	./distributionTest -u -l 100 1 100
-	./distributionTest -e -b 100 1 100 .76
-	./distributionTest -e -l 100 1 100 .75
-	./distributionTest -n -b 100 1 100 50 5
-	./distributionTest -n -l 100 1 100 50 5
+	./distributionTest -u -b 100 1 1000
+	./distributionTest -u -l 100 1 1000
+	./distributionTest -e -b 100 1 1000 .76
+	./distributionTest -e -l 100 1 1000 .75
+	./distributionTest -n -b 100 1 1000 50 5
+	./distributionTest -n -l 100 1 1000 50 5
 clean:
 	rm *.o
 	rm distributionTest
