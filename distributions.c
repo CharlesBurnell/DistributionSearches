@@ -7,14 +7,30 @@ struct test{
 	int topFloor;
 	int bottomFloor;
 	int numRounds;
-	int typeOfRV;
+	struct typeOfRVstruct{
+		int distro;
+		int numberOfParameters;
+	}typeOfRV;
+	union firstParameterUnion{
+		double lambda;
+		double mu;
+	} firstParameter;
+	union secondParameterUnion{
+		int sigma;
+	} secondParameter;
+	int argc;
+	char **argv;
 };
 int binarySearchForFloor(int balloonPop, int topFloor, int bottomFloor);
 int linearSearchForFloor(int balloonPop, int topFloor, int bottomFloor);
 double getExpFromUniform(double probability, double lambda);
 double getNormalRV(double mu, double sigma);
 double getUniformRV();
-void testFunction(struct test thisTest);
+void testFunction(struct test thisTest, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
+int getBalloonPop(struct test thisTest);
+// Right now pointers are not being used to return values.
+// This was originally going to be used to pass results of the test
+// But with the newest restructure it isn't done yet
 int* uniformTest(struct test thisTest, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
 int* expTest(struct test thisTest, double lambda, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
 int* normTest(struct test thisTest, double mu, double sigma, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
@@ -32,6 +48,8 @@ int main(int argc, char *argv[])
 	thisTest.bottomFloor = atol(argv[4]);
 	thisTest.numRounds = atol(argv[5]);
 	//printf("%d - %d - %d - %d \n",distro,userTopFloor,userBottomFloor,userNumRounds);
+	thisTest.argc = argc;
+	thisTest.argv = argv;
 	int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor);
 
 	srand(time(NULL));
@@ -45,25 +63,7 @@ int main(int argc, char *argv[])
 		break;
 	}
 
-	switch(distro)
-	{
-	case 0:
-		break;
-	case 1:
-		printf("Uniform test\n");
-		uniformTest(thisTest,searchToUse);
-		break;
-	case 2:
-		printf("Exponential test\n");
-		double userLambda = atof(argv[startingArg+3]);
-		expTest(thisTest,userLambda,searchToUse);
-		break;
-	case 3:
-		printf("Normal test\n");
-		double userMu = atof(argv[startingArg+3]);
-		double userSigma = atof(argv[startingArg+4]);
-		normTest(thisTest,userMu,userSigma,searchToUse);
-	}
+	testFunction(thisTest,searchToUse);
 	return 0;
 }
 
@@ -109,7 +109,7 @@ int binarySearchForFloor(int balloonPop, int topFloor, int bottomFloor)
 	int lowerBound=bottomFloor;
 	int upperBound=topFloor;
 	int counter=1;
-	int floorGuess=(topFloor-bottomFloor)/2+bottomFloor;//+1 to correct for the error of a negative floor
+	int floorGuess=(topFloor-bottomFloor)/2+bottomFloor;
 	/**
 	 * This checks that the search finds the correct position
 	 * starting at floor(numFloors/2) due to integer division
@@ -194,7 +194,8 @@ double getUniformRV()
 }
 /*
  * TODO finish this function
-void testFunction(struct test thisTest)
+ */
+void testFunction(struct test thisTest,int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
 {
 	int numRounds = thisTest.numRounds;
 	int topFloor = thisTest.topFloor;
@@ -206,27 +207,6 @@ void testFunction(struct test thisTest)
 	totalRounds=0;
 	int i;
 	int numFloors = topFloor-bottomFloor;
-	int typeOfRV = thisTest.typeOfRV;
-	for(i=0;i<numRounds;i++)
-	{
-	}
-}
-*/
-
-int* uniformTest(struct test thisTest, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
-{
-	int numRounds = thisTest.numRounds;
-	int topFloor = thisTest.topFloor;
-	int bottomFloor = thisTest.bottomFloor;
-	int array[2];//First Item is count
-	int *arrayPointer;
-	int passed;
-	int totalRounds;
-	int balloonPop;
-	arrayPointer=&array[0];
-	passed=0;
-	totalRounds=0;
-	int i;
 	for(i=0;i<numRounds;i++)
 	{
 		int numFloors =topFloor-bottomFloor;
@@ -235,78 +215,41 @@ int* uniformTest(struct test thisTest, int (*searchToUse)(int balloonPop, int to
 		//balloonPop=topFloor;
 		int counter;
 		counter = searchToUse(balloonPop,topFloor,bottomFloor);
-		totalRounds+=counter;
-		passed++;
-	}
-	printf("number passed : %d\nAverage number of rounds %f\n",passed,(double)totalRounds/(double)numRounds);
-
-	return arrayPointer;
-}
-
-int* expTest(struct test thisTest, double lambda, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
-{
-	int numRounds = thisTest.numRounds;
-	int topFloor = thisTest.topFloor;
-	int bottomFloor = thisTest.bottomFloor;
-	int array[2];//First Item is count
-	int *arrayPointer;
-	arrayPointer=&array[0];
-	double probability;
-	int balloonPop;
-	int passed =0;
-	int totalRounds=0;
-	int i;
-	for(i=0; i<numRounds; i++){
-		probability = getUniformRV();
-		balloonPop = (int) getExpFromUniform(probability,lambda)+bottomFloor;
-		//printf("%f, %f\n",probability,expRV);
-		//balloonPop=bottomFloor;
-		//balloonPop=topFloor;
-		int counter;
-		counter = searchToUse(balloonPop,topFloor,bottomFloor);
-		totalRounds+=counter;
-		passed++;
-	}
-	printf("lambda = %f\n",lambda);
-	printf("number passed : %d\nAverage number of rounds %f\n",passed,(double)totalRounds/(double)numRounds);
-
-
-	return arrayPointer;
-
-}
-
-int* normTest(struct test thisTest, double mu, double sigma, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
-{
-	int numRounds = thisTest.numRounds;
-	int topFloor = thisTest.topFloor;
-	int bottomFloor = thisTest.bottomFloor;
-	int array[2];//First Item is count
-	int *arrayPointer;
-	arrayPointer=&array[0];
-	int balloonPop;
-	int passed=0;
-	int totalRounds=0;
-	//double meanTest=0;
-	int i;
-	for(i=0;i<numRounds;i++)
-	{
-		balloonPop = (int) getNormalRV(mu,sigma);
-		int counter;
-		//printf("%d from \n",balloonPop);
-		counter = searchToUse(balloonPop,topFloor,bottomFloor);
 		if (counter!=-1){
 			passed++;
 			totalRounds+=counter;
 		}
-		//meanTest+=normRV;
 	}
-	printf("mu: %f sigma: %f \n",mu,sigma);
 	printf("number passed : %d\nAverage number of rounds %f\n",passed,(double)totalRounds/(double)numRounds);
-	//printf("%f\n%f\n",meanTest,meanTest / numRounds);//Used on
-	//mu=0;sigma=1; to test that it was centered on what was expected
-	return arrayPointer;
-
 }
+
+
+int getBalloonPop(struct test thisTest){
+	int balloonPop;
+	int topFloor = thisTest.topFloor;
+	int bottomFloor = thisTest.bottomFloor;
+	double probability;
+	double firstParameter;
+	double secondParameter;
+	switch(thisTest.typeOfRV.distro)
+	{
+	case 1:
+		balloonPop = rand() % (topFloor-bottomFloor) + bottomFloor;
+		break;
+	case 2:
+		firstParameter= thisTest.firstParameter.lambda;
+		probability = getUniformRV();
+		balloonPop = (int) getExpFromUniform(probability,firstParameter)+bottomFloor;
+		break;
+	case 3:
+		firstParameter = thisTest.firstParameter.mu;
+		secondParameter= thisTest.secondParameter.sigma;
+		balloonPop = (int) getNormalRV(firstParameter,secondParameter);
+		break;
+	}
+	return balloonPop;
+}
+
 /*
  * parses command line argument for type of distribution to use to generate
  */
