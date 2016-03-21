@@ -2,15 +2,44 @@
 #include <math.h>
 #include <stdlib.h>
 #include "generateRVs.h"
+//#include "testStructure.h"
 
+
+/**
+ * This returns a uniform rv on (0,1)
+ * Helper function used so we can make other RVs
+ * Using quantile fucntions
+ */
+double generateUniformRV()
+{
+	double uniformRV;
+	// consider adding 1 to rand and 2 to maxrand to make it
+	// guarenteed (0,1).
+	uniformRV = (double)rand()/(double)RAND_MAX;
+	return uniformRV;
+}
+
+
+double getUniformRV(struct test *thisTest)
+{
+	int topFloor = thisTest->topFloor;
+	int bottomFloor = thisTest->bottomFloor;
+	double numFloors = (double) topFloor - (double) bottomFloor;
+	double probability = generateUniformRV();
+	double UniformRV = numFloors*probability+(double) bottomFloor;
+	return UniformRV;
+}
 
 /*
  * This uses 2 variables in U(0,1) to generate a RV ~ N(mu,sigma)
  */
-double getNormalRV(double mu, double sigma)
+//double getNormalRV(double mu, double sigma)
+double getNormalRV(struct test *thisTest)
 {
-	double Unif1 = getUniformRV();
-	double Unif2 = getUniformRV();
+	double mu = thisTest->firstParameter;
+	double sigma = thisTest->secondParameter;
+	double Unif1 = generateUniformRV();
+	double Unif2 = generateUniformRV();
 	double Norm1 = sqrt(-2*log(Unif1))*cos(2*M_PI*Unif2);
 	Norm1 = Norm1*sigma+mu;
 	return Norm1;
@@ -19,21 +48,32 @@ double getNormalRV(double mu, double sigma)
  * This uses the quantile passed in as the probability to generate
  * a value in an expontial RV with lamba as the scale vector
  */
-double getExpFromUniform(double probability, double lambda)
+//double getExponentialRV(double probability, double lambda)
+double getExponentialRV(struct test *thisTest)
 {
 	double expRV;
+	double probability = generateUniformRV();
+	double lambda = thisTest->firstParameter;
 	expRV=-log(1.0-probability)/lambda;
 	return expRV;
 }
 
+
 /**
- * This returns a uniform rv on (0,1)
+ * This generates a Cauchy RV with parameters
+ * xnaught being the location parameter and
+ * gamma being the scale RV.
+ * This is similar to a Normal RV except that
+ * there is no variance in it.
  */
-double getUniformRV()
+//double getCauchyRV(double xnaught, double gamma)
+double getCauchyRV(struct test *thisTest)
 {
-	double uniformRV;
-	// consider adding 1 to rand and 2 to maxrand to make it
-	// guarenteed (0,1).
-	uniformRV = (double)rand()/(double)RAND_MAX;
-	return uniformRV;
+	double probability = generateUniformRV();
+	double xnaught = thisTest->firstParameter;
+	double gamma = thisTest->secondParameter;
+	// Quantile function is from wikipedia and checked
+	// against a stats textbook not derived by myself
+	double caucheyRV = xnaught + gamma * tan(M_PI *(probability-1/2));
+	return caucheyRV;
 }

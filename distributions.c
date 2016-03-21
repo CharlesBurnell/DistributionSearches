@@ -4,68 +4,41 @@
 #include <math.h>
 #include "searchFunctions.h"
 #include "generateRVs.h"
-struct test{
-	int topFloor;
-	int bottomFloor;
-	int numRounds;
-	struct typeOfRVstruct{
-		int distro;
-		int numberOfParameters;
-	}typeOfRV;
-	union firstParameterUnion{
-		double lambda;
-		double mu;
-	} firstParameter;
-	union secondParameterUnion{
-		int sigma;
-	} secondParameter;
-	int argc;
-	char **argv;
-};
-void testFunction(struct test thisTest, int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor));
-int getBalloonPop(struct test thisTest);
-int getDistrubution(int argc, char **argv);
-int getSearchFunction(int argc, char **argv);
+//#include "testStructure.h"
+
+void testFunction(struct test *thisTest);
+int getBalloonPop(struct test *thisTest);
+void getDistrubution(int argc, char **argv, struct test *thisTest);
+int getSearchFunction(int argc, char **argv, struct test *thisTest);
 void printUsage();
 
 int main(int argc, char *argv[])
-	{
-	int searchFunction = getSearchFunction(argc, argv);
-	struct test thisTest;
-	thisTest.topFloor = atol(argv[3]);
-	thisTest.bottomFloor = atol(argv[4]);
-	thisTest.numRounds = atol(argv[5]);
-	//printf("%d - %d - %d - %d \n",distro,userTopFloor,userBottomFloor,userNumRounds);
-	thisTest.argc = argc;
-	thisTest.argv = argv;
-	int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor);
-
+{
 	srand(time(NULL));
-	switch(searchFunction)
-	{
-	case 1:
-		searchToUse = binarySearchForFloor;
-		break;
-	case 2:
-		searchToUse = linearSearchForFloor;
-		break;
-	case 3:
-		searchToUse = randomSearchForFloor;
-		break;
-	}
+	struct test* thisTest=createTest();
+	thisTest->topFloor = atol(argv[3]);
+	thisTest->bottomFloor = atol(argv[4]);
+	thisTest->numRounds = atol(argv[5]);
+	getSearchFunction(argc, argv, thisTest);
+	getDistrubution(argc, argv, thisTest);
+	//printf("%d - %d - %d - %d \n",distro,userTopFloor,userBottomFloor,userNumRounds);
+	//thisTest.argc = argc;
+	//thisTest.argv = argv;
+	//int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor);
+	//double test = thisTest.
 
-	testFunction(thisTest,searchToUse);
+	testFunction(thisTest);
 	return 0;
 }
 
 /*
  * TODO finish this function
  */
-void testFunction(struct test thisTest,int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor))
+void testFunction(struct test *thisTest)
 {
-	int numRounds = thisTest.numRounds;
-	int topFloor = thisTest.topFloor;
-	int bottomFloor = thisTest.bottomFloor;
+	int numRounds = thisTest->numRounds;
+	int topFloor = thisTest->topFloor;
+	int bottomFloor = thisTest->bottomFloor;
 	int passed;
 	int totalRounds;
 	int balloonPop;
@@ -75,11 +48,13 @@ void testFunction(struct test thisTest,int (*searchToUse)(int balloonPop, int to
 	for(i=0;i<numRounds;i++)
 	{
 		int numFloors =topFloor-bottomFloor;
-		balloonPop= rand() %numFloors+bottomFloor;
+		balloonPop= getBalloonPop(thisTest);
+		printf("getBalloonPop result %d\n",balloonPop);
 		//balloonPop=bottomFloor;
 		//balloonPop=topFloor;
 		int counter;
-		counter = searchToUse(balloonPop,topFloor,bottomFloor);
+		counter = thisTest->searchToUse(balloonPop,topFloor,bottomFloor);
+		printf("got this far %d\n",i);
 		if (counter!=-1){
 			passed++;
 			totalRounds+=counter;
@@ -88,31 +63,38 @@ void testFunction(struct test thisTest,int (*searchToUse)(int balloonPop, int to
 	printf("number passed : %d\nAverage number of rounds %f\n",passed,(double)totalRounds/(double)numRounds);
 }
 
-
-int getBalloonPop(struct test thisTest){
+/*
+ * This takes a struct test extracts the parameters
+ * of the RV and then generates the floor that the
+ * balloonPop will be. This needs to be updated
+ * when RVs are added.
+ */
+int getBalloonPop(struct test *thisTest){
+	printf("In getBalloonPop \n");
 	int balloonPop;
-	int topFloor = thisTest.topFloor;
-	int bottomFloor = thisTest.bottomFloor;
+	int topFloor = thisTest->topFloor;
+	int bottomFloor = thisTest->bottomFloor;
 	double probability;
 	double firstParameter;
 	double secondParameter;
-	switch(thisTest.typeOfRV.distro)
+	printf("thisTest.typeOfRV.distro: %d\n", thisTest->typeOfRV.distro);
+	switch(thisTest->typeOfRV.distro)
 	{
 	//Uniform RV
 	case 1:
 		balloonPop = rand() % (topFloor-bottomFloor) + bottomFloor;
+		printf("AHHHHHHHHHHHHHHHHHHHHHH %d\n",balloonPop);
 		break;
 	//Exponential RV
 	case 2:
-		firstParameter= thisTest.firstParameter.lambda;
-		probability = getUniformRV();
-		balloonPop = (int) getExpFromUniform(probability,firstParameter)+bottomFloor;
+		//firstParameter= thisTest.firstParameter.lambda;
+		balloonPop =  (int) getExponentialRV(thisTest);
 		break;
 	//Normal RV
 	case 3:
-		firstParameter = thisTest.firstParameter.mu;
-		secondParameter= thisTest.secondParameter.sigma;
-		balloonPop = (int) getNormalRV(firstParameter,secondParameter);
+		//firstParameter = thisTest.firstParameter.mu;
+		//secondParameter= thisTest.secondParameter.sigma;
+		balloonPop = (int) getNormalRV(thisTest);
 		break;
 	}
 	return balloonPop;
@@ -121,7 +103,7 @@ int getBalloonPop(struct test thisTest){
 /*
  * parses command line argument for type of distribution to use to generate
  */
-int getDistrubution(int argc, char **argv)
+void getDistrubution(int argc, char **argv, struct test *thisTest)
 {
 	if(argc<6)
 	{
@@ -133,25 +115,36 @@ int getDistrubution(int argc, char **argv)
 	{
 	//Return Uniform RV
 	case 'u':
-		return 1;
+		printf("Uniform Random Variable\n");
+		thisTest->typeOfRV.distro = 1;
+		thisTest->generateRVFunc = getUniformRV;
+		return;
 		break;
 	//Return Exponential RV
 	case 'e':
-		return 2;
+		printf("Exponential Random Variable\n");
+		thisTest->typeOfRV.distro = 2;
+		thisTest->generateRVFunc = getExponentialRV;
+		return;
 		break;
 	//Return Normal RV
 	case 'n':
-		return 3;
+		printf("Normal Random Variable\n");
+		thisTest->typeOfRV.distro = 3;
+		thisTest->generateRVFunc = getNormalRV;
+		return;
 		break;
 	default:
 		printUsage();
-		return 0;
+		return;
 	}
 }
+
+
 /*
  * parses command line arguments for the type of search function to sue
  */
-int getSearchFunction(int argc, char **argv)
+int getSearchFunction(int argc, char **argv, struct test *thisTest)
 {
 	if(argc<6)
 	{
@@ -163,21 +156,25 @@ int getSearchFunction(int argc, char **argv)
 	{
 	// Binary Search
 	case 'b':
-		return 1;
+		thisTest->searchToUse = binarySearchForFloor;
 		break;
 	// Linear Search
 	case 'l':
-		return 2;
+		thisTest->searchToUse = linearSearchForFloor;
 		break;
+	// Random Search
 	case 'r':
-		return 3;
+		thisTest->searchToUse = randomSearchForFloor;
 		break;
 	default:
 		printUsage();
 		return 0;
 	}
 }
-
+/*
+ * This should be called when a input isn't correct
+ * TODO format it so its better and easier to read
+ */
 
 void printUsage()
 {

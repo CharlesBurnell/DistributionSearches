@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -g
-OBJS = distributions.o searchFunctions.o generateRVs.o
+OBJS = distributions.o searchFunctions.o generateRVs.o testStructure.o
 
 .c.o:
 	    $(CC) -c $(CFLAGS) $<
@@ -10,6 +10,9 @@ all: distributionTest
 
 distributionTest: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+test: all
+	./distributionTest -u -b 100 1 1000
 
 example: all
 	./distributionTest
