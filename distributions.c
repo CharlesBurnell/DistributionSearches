@@ -48,7 +48,7 @@ void testFunction(struct test *thisTest)
 	for(i=0;i<numRounds;i++)
 	{
 		balloonPop= (int) getBalloonPop(thisTest);
-		//printf("getBalloonPop result %d\n",balloonPop);
+//		printf("getBalloonPop result %d\n",balloonPop);
 		//balloonPop=bottomFloor;
 		//balloonPop=topFloor;
 		int counter;
@@ -91,6 +91,9 @@ int getBalloonPop(struct test *thisTest){
 		//secondParameter= thisTest.secondParameter.sigma;
 		balloonPop = (int) getNormalRV(thisTest);
 		break;
+	case 4:
+		balloonPop = (int) getCauchyRV(thisTest);
+		break;
 	}
 	//printf("%d\n",balloonPop);
 	return balloonPop;
@@ -115,7 +118,6 @@ void getDistrubution(int argc, char **argv, struct test *thisTest)
 		thisTest->typeOfRV.distro = 1;
 		thisTest->generateRVFunc = getUniformRV;
 		return;
-		break;
 	//Return Exponential RV
 	case 'e':
 		printf("Exponential Random Variable\n");
@@ -123,7 +125,6 @@ void getDistrubution(int argc, char **argv, struct test *thisTest)
 		thisTest->generateRVFunc = getExponentialRV;
 		thisTest->firstParameter = atof(argv[6]);
 		return;
-		break;
 	//Return Normal RV
 	case 'n':
 		printf("Normal Random Variable\n");
@@ -132,7 +133,13 @@ void getDistrubution(int argc, char **argv, struct test *thisTest)
 		thisTest->firstParameter = atof(argv[6]);
 		thisTest->secondParameter = atof(argv[7]);
 		return;
-		break;
+	case 'c':
+		printf("Cauchy Random Variable\n");
+		thisTest->typeOfRV.distro = 4;
+		thisTest->generateRVFunc = getCauchyRV;
+		thisTest->firstParameter = atof(argv[6]);
+		thisTest->secondParameter = atof(argv[7]);
+		return;
 	default:
 		printUsage();
 		return;

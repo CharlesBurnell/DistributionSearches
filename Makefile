@@ -25,6 +25,9 @@ example: all
 	./distributionTest -n -b 100 1 1000 50 5
 	./distributionTest -n -l 100 1 1000 50 5
 	./distributionTest -n -r 100 1 1000 50 5
+	./distributionTest -c -b 100 1 1000 50 5
+	./distributionTest -c -l 100 1 1000 50 5
+	./distributionTest -c -r 100 1 1000 50 5
 uniform: all
 	./distributionTest -u -b 100 1 1
 	./distributionTest -u -l 100 1 1
@@ -37,6 +40,10 @@ normal: all
 	./distributionTest -n -b 100 1 1 50 5
 	./distributionTest -n -l 100 1 1 50 5
 	./distributionTest -n -r 100 1 1 50 5
+cauchy: all
+	./distributionTest -c -b 100 1 1 50 5
+	./distributionTest -c -l 100 1 1 50 5
+	./distributionTest -c -r 100 1 1 50 5
 clean:
 	rm *.o
 	rm distributionTest

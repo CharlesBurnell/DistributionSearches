@@ -103,8 +103,10 @@ int randomSearchForFloor(int balloonPop, int topFloor, int bottomFloor)
 		floorGuess = rand()%(topFloor-bottomFloor)+bottomFloor;
 		if(floorGuess==bottomFloor && balloonPop<bottomFloor){
 			break;
-		}else
-		if(floorGuess==topFloor && balloonPop>topFloor){
+		}
+		// minus one because we are working in Z_{top-bottom} which wont
+		// have the top floor
+		if(floorGuess==topFloor-1 && balloonPop>topFloor){
 			break;
 		}
 		count++;

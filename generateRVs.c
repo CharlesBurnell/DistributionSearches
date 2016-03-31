@@ -76,6 +76,7 @@ double getCauchyRV(struct test *thisTest)
 	double probability = generateUniformRV();
 	double xnaught = thisTest->firstParameter;
 	double gamma = thisTest->secondParameter;
+	//printf("%f : %f \n",xnaught,gamma);
 	// Quantile function is from wikipedia and checked
 	// against a stats textbook not derived by myself
 	double caucheyRV = xnaught + gamma * tan(M_PI *(probability-1/2));
