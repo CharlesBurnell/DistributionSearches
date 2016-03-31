@@ -15,7 +15,9 @@ double generateUniformRV()
 	double uniformRV;
 	// consider adding 1 to rand and 2 to maxrand to make it
 	// guarenteed (0,1).
-	uniformRV = (double)rand()/(double)RAND_MAX;
+	double randomNumber = (double)rand();
+	uniformRV = (double)randomNumber/(double)RAND_MAX;
+	//printf("%d : %d in generateURV\n",(int)randomNumber,(int)uniformRV);
 	return uniformRV;
 }
 
@@ -51,10 +53,12 @@ double getNormalRV(struct test *thisTest)
 //double getExponentialRV(double probability, double lambda)
 double getExponentialRV(struct test *thisTest)
 {
+	//printf("in exp RV\n");
 	double expRV;
 	double probability = generateUniformRV();
 	double lambda = thisTest->firstParameter;
 	expRV=-log(1.0-probability)/lambda;
+//	printf("%f : %f : %f\n",lambda,probability,expRV);
 	return expRV;
 }
 

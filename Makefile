@@ -25,6 +25,18 @@ example: all
 	./distributionTest -n -b 100 1 1000 50 5
 	./distributionTest -n -l 100 1 1000 50 5
 	./distributionTest -n -r 100 1 1000 50 5
+uniform: all
+	./distributionTest -u -b 100 1 1
+	./distributionTest -u -l 100 1 1
+	./distributionTest -u -r 100 1 1
+exponential: all
+	./distributionTest -e -b 100 1 1 .76
+	./distributionTest -e -l 100 1 1 .75
+	./distributionTest -e -r 100 1 1 .75
+normal: all
+	./distributionTest -n -b 100 1 1 50 5
+	./distributionTest -n -l 100 1 1 50 5
+	./distributionTest -n -r 100 1 1 50 5
 clean:
 	rm *.o
 	rm distributionTest

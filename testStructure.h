@@ -15,7 +15,7 @@ struct test{
 	//in the test structure
 	int (*searchToUse)(int balloonPop, int topFloor, int bottomFloor);
 
-	double (*generateRVFunc)(struct test thisTest);
+	double (*generateRVFunc)(struct test *thisTest);
 
 	//Rethink if this is really needed.
 	//Could be used to circumevent the parameters

@@ -48,13 +48,13 @@ void testFunction(struct test *thisTest)
 	for(i=0;i<numRounds;i++)
 	{
 		int numFloors =topFloor-bottomFloor;
-		balloonPop= getBalloonPop(thisTest);
-		printf("getBalloonPop result %d\n",balloonPop);
+		balloonPop= (int) getBalloonPop(thisTest);
+		//printf("getBalloonPop result %d\n",balloonPop);
 		//balloonPop=bottomFloor;
 		//balloonPop=topFloor;
 		int counter;
 		counter = thisTest->searchToUse(balloonPop,topFloor,bottomFloor);
-		printf("got this far %d\n",i);
+		//printf("got this far %d\n",i);
 		if (counter!=-1){
 			passed++;
 			totalRounds+=counter;
@@ -70,20 +70,19 @@ void testFunction(struct test *thisTest)
  * when RVs are added.
  */
 int getBalloonPop(struct test *thisTest){
-	printf("In getBalloonPop \n");
+	//printf("In getBalloonPop \n");
 	int balloonPop;
 	int topFloor = thisTest->topFloor;
 	int bottomFloor = thisTest->bottomFloor;
 	double probability;
 	double firstParameter;
 	double secondParameter;
-	printf("thisTest.typeOfRV.distro: %d\n", thisTest->typeOfRV.distro);
+	//printf("thisTest.typeOfRV.distro: %d\n", thisTest->typeOfRV.distro);
 	switch(thisTest->typeOfRV.distro)
 	{
 	//Uniform RV
 	case 1:
 		balloonPop = rand() % (topFloor-bottomFloor) + bottomFloor;
-		printf("AHHHHHHHHHHHHHHHHHHHHHH %d\n",balloonPop);
 		break;
 	//Exponential RV
 	case 2:
@@ -97,6 +96,7 @@ int getBalloonPop(struct test *thisTest){
 		balloonPop = (int) getNormalRV(thisTest);
 		break;
 	}
+	//printf("%d\n",balloonPop);
 	return balloonPop;
 }
 
@@ -125,6 +125,7 @@ void getDistrubution(int argc, char **argv, struct test *thisTest)
 		printf("Exponential Random Variable\n");
 		thisTest->typeOfRV.distro = 2;
 		thisTest->generateRVFunc = getExponentialRV;
+		thisTest->firstParameter = atof(argv[6]);
 		return;
 		break;
 	//Return Normal RV
@@ -132,6 +133,8 @@ void getDistrubution(int argc, char **argv, struct test *thisTest)
 		printf("Normal Random Variable\n");
 		thisTest->typeOfRV.distro = 3;
 		thisTest->generateRVFunc = getNormalRV;
+		thisTest->firstParameter = atof(argv[6]);
+		thisTest->secondParameter = atof(argv[7]);
 		return;
 		break;
 	default:

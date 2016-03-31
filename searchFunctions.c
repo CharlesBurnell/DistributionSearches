@@ -101,6 +101,12 @@ int randomSearchForFloor(int balloonPop, int topFloor, int bottomFloor)
 	int floorGuess = rand()%(topFloor-bottomFloor)+bottomFloor;
 	while (floorGuess!=balloonPop){
 		floorGuess = rand()%(topFloor-bottomFloor)+bottomFloor;
+		if(floorGuess==bottomFloor && balloonPop<bottomFloor){
+			break;
+		}else
+		if(floorGuess==topFloor && balloonPop>topFloor){
+			break;
+		}
 		count++;
 	}
 	return count;
