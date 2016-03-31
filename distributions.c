@@ -9,7 +9,7 @@
 void testFunction(struct test *thisTest);
 int getBalloonPop(struct test *thisTest);
 void getDistrubution(int argc, char **argv, struct test *thisTest);
-int getSearchFunction(int argc, char **argv, struct test *thisTest);
+void getSearchFunction(int argc, char **argv, struct test *thisTest);
 void printUsage();
 
 int main(int argc, char *argv[])
@@ -47,7 +47,6 @@ void testFunction(struct test *thisTest)
 	int i;
 	for(i=0;i<numRounds;i++)
 	{
-		int numFloors =topFloor-bottomFloor;
 		balloonPop= (int) getBalloonPop(thisTest);
 		//printf("getBalloonPop result %d\n",balloonPop);
 		//balloonPop=bottomFloor;
@@ -74,9 +73,6 @@ int getBalloonPop(struct test *thisTest){
 	int balloonPop;
 	int topFloor = thisTest->topFloor;
 	int bottomFloor = thisTest->bottomFloor;
-	double probability;
-	double firstParameter;
-	double secondParameter;
 	//printf("thisTest.typeOfRV.distro: %d\n", thisTest->typeOfRV.distro);
 	switch(thisTest->typeOfRV.distro)
 	{
@@ -147,7 +143,7 @@ void getDistrubution(int argc, char **argv, struct test *thisTest)
 /*
  * parses command line arguments for the type of search function to sue
  */
-int getSearchFunction(int argc, char **argv, struct test *thisTest)
+void getSearchFunction(int argc, char **argv, struct test *thisTest)
 {
 	if(argc<6)
 	{
@@ -171,7 +167,6 @@ int getSearchFunction(int argc, char **argv, struct test *thisTest)
 		break;
 	default:
 		printUsage();
-		return 0;
 	}
 }
 /*
